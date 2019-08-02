@@ -51,28 +51,29 @@ int readRecord(FILE *inf, char buffer[], int maxChars) {
    }
    else {
       while(!done) {
-	 ch = getc(inf);
-	 if ((ch == '@') || (ch == '#')) {
-	    /* special codes turn off forced uppercase */
-	    /* "at sign" used for commands */
-	    /* "hash" used for comments */
-	    makeUpperCase  = 0;
-	 }
-	 if (makeUpperCase) {
-	    ch = toupper(ch);
-	 }
-	 if ((ch == EOF) || (ch == '\n')) {
-	    done = 1;
-	 }
-	 else if (ch == '\r') {
-	    ch = getc(inf);
-	    if (ch != '\n') { ungetc(ch, inf); }
-	    done = 1;
-	 }
-	 else if (count < maxChars) {
-	    buffer[count++] = ch;
-	 }
-	 /*   otherwise we drop ch in the bit bucket */
+         ch = getc(inf);
+         if ((ch == '@') || (ch == '#')) {
+            /* special codes turn off forced uppercase */
+            /* "at sign" used for commands */
+            /* "hash" used for comments */
+            makeUpperCase  = 0;
+         }
+         if ((ch == EOF) || (ch == '\n')) {
+            done = 1;
+         } else {
+            if (makeUpperCase) {
+               ch = toupper(ch);
+            }
+            if (ch == '\r') {
+               ch = getc(inf);
+               if (ch != '\n') { ungetc(ch, inf); }
+               done = 1;
+            }
+            else if (count < maxChars) {
+               buffer[count++] = ch;
+            }
+         }
+         /*   otherwise we drop ch in the bit bucket */
       }
       buffer[count] = '\0';
    }
